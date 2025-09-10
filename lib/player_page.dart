@@ -1,63 +1,108 @@
 import 'package:flutter/material.dart';
-import 'radio_station.dart'; // Precisamos saber o que é uma RadioStation
+import 'package:audioplayers/audioplayers.dart';
+import 'radio_station.dart';
 
-class PlayerPage extends StatelessWidget {
-  // Esta tela recebe uma estação de rádio como parâmetro
+// Este é o nosso widget de player, agora independente e reutilizável.
+class PlayerWidget extends StatefulWidget {
+  // Ele recebe uma estação de rádio para saber o que tocar.
   final RadioStation station;
 
-  const PlayerPage({super.key, required this.station});
+  // O construtor exige que uma 'station' seja fornecida sempre que este widget for usado.
+  const PlayerWidget({
+    super.key,
+    required this.station,
+  });
+
+  @override
+  State<PlayerWidget> createState() => _PlayerWidgetState();
+}
+
+class _PlayerWidgetState extends State<PlayerWidget> {
+  // A lógica do player agora vive aqui.
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+
+  @override
+  void dispose() {
+    // É importante libertar os recursos do player quando o widget é destruído.
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  // Função para tocar a rádio.
+  Future<void> _play() async {
+    // Usamos 'widget.station' para aceder à estação que foi passada para este widget.
+    await _audioPlayer.play(UrlSource(widget.station.streamUrl));
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  // Função para pausar a rádio.
+  Future<void> _pause() async {
+    await _audioPlayer.pause();
+    setState(() {
+      _isPlaying = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(station.name), // O título da barra será o nome da rádio
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Exibe a imagem da rádio num formato de cartão arredondado
-            Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              clipBehavior: Clip.antiAlias, // Corta a imagem para caber nas bordas arredondadas
-              child: Image.network(
-                station.imageUrl,
-                width: 250,
-                height: 250,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'A tocar agora',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              station.name,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 40),
-            // Ícones de controle (placeholders por enquanto)
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.skip_previous, size: 48),
-                SizedBox(width: 32),
-                Icon(Icons.play_arrow, size: 64),
-                SizedBox(width: 32),
-                Icon(Icons.skip_next, size: 48),
-              ],
-            )
-          ],
+    // A interface do player, que antes estava na HomePage.
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Logótipo da Rádio
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16.0),
+          child: Image.network(
+            widget.station.imageUrl, // Usa a imagem da estação fornecida.
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const SizedBox(
+                height: 200,
+                width: 200,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(Icons.radio, size: 200);
+            },
+          ),
         ),
-      ),
+        
+        const SizedBox(height: 32.0),
+
+        // Nome da Rádio
+        Text(
+          widget.station.name, // Usa o nome da estação fornecida.
+          style: Theme.of(context).textTheme.headlineSmall,
+          textAlign: TextAlign.center,
+        ),
+        
+        const SizedBox(height: 8.0),
+
+        // Status (Tocando / Pausado)
+        Text(
+          _isPlaying ? 'A Tocar Agora...' : 'Em Pausa',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        
+        const SizedBox(height: 32.0),
+
+        // Botão de Play/Pause
+        IconButton(
+          icon: Icon(
+            _isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_filled_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          iconSize: 80.0,
+          onPressed: _isPlaying ? _pause : _play,
+        ),
+      ],
     );
   }
 }
