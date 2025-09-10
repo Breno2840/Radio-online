@@ -1,43 +1,31 @@
 import 'package:flutter/material.dart';
+import 'home_page.dart'; // Vamos criar este ficheiro a seguir
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // Application name
-      title: 'Flutter Hello World',
-      // Application theme data, you can set the colors for the application as
-      // you want
-      theme: ThemeData(
-        // useMaterial3: false,
-        primarySwatch: Colors.blue,
-      ),
-      // A widget which will be started on application startup
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+void main() {
+  runApp(const RadioApp());
 }
 
-class MyHomePage extends StatelessWidget {
-  final String title;
-  const MyHomePage({super.key, required this.title});  
+class RadioApp extends StatelessWidget {
+  const RadioApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // The title text which will be shown on the action bar
-        title: Text(title),
-      ),
-      body: Center(
-        child: Text(
-          'Hello, World!',
+    // MaterialApp é o widget principal da nossa aplicação
+    return MaterialApp(
+      title: 'Rádio Online',
+      debugShowCheckedModeBanner: false, // Remove a faixa de "Debug" no canto
+      
+      // Aqui definimos o tema da aplicação
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple, // Cor base para o Material You
+          brightness: Brightness.dark,   // Define o tema como escuro
         ),
+        useMaterial3: true, // Ativa o design Material You (Material 3)
       ),
+      
+      // Define a tela inicial da aplicação
+      home: const HomePage(),
     );
   }
 }
