@@ -8,12 +8,12 @@ import 'player_page.dart';   // E precisamos do nosso novo PlayerWidget.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // Aqui definimos a estação de rádio que queremos tocar.
-  // No futuro, isto pode vir de uma lista ou de uma base de dados.
+  // ===== ALTERAÇÃO FEITA AQUI =====
+  // Trocamos os dados da rádio para a Rádio Dence.
   final RadioStation station = const RadioStation(
-    name: 'Rádio Lofi Girl',
-    streamUrl: 'https://play.streamaud.io/lofi-girl',
-    imageUrl: 'https://i.scdn.co/image/ab67616d0000b2734691a82a2955f84287865f83',
+    name: 'Rádio Dence', // Nome novo
+    streamUrl: 'https://servidor32-2.brlogic.com:8198/live', // Link novo
+    imageUrl: 'https://i.scdn.co/image/ab67616d0000b2734691a82a2955f84287865f83', // Imagem mantida (leia o aviso abaixo)
   );
 
   @override
