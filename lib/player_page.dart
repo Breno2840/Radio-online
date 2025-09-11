@@ -87,7 +87,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
         // Status (Tocando / Pausado)
         Text(
-          _isPlaying ? 'A Tocar Agora...' : 'Em Pausa',
+          // ===== ALTERAÇÃO FEITA AQUI =====
+          _isPlaying ? 'Tocando Agora...' : 'Pausado',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         
